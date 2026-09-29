@@ -1,11 +1,11 @@
-# KEEP IT RUNNING v0.03
+# KEEP IT RUNNING v0.04
 
 Mobile web/PWA prototype.
 
-- UA / EN language switch
-- Ukrainian by default
-- versioned, network-first PWA cache
-- offline fallback after first successful load
-- reactor survival core loop
-
-Open `index.html` through a web server or deploy the repository with GitHub Pages.
+- UA / EN
+- random equipment faults
+- escalating reactor dynamics
+- haptic + Web Audio feedback where supported
+- warning/critical visual states
+- emergency cooling charges + SCRAM
+- versioned network-first PWA cache
