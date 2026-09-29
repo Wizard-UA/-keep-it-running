@@ -1,15 +1,12 @@
-# KEEP IT RUNNING v0.06
+# KEEP IT RUNNING v0.061 — 8 BIT test
 
-First vertical-slice build.
+A simplified gameplay prototype.
 
-## What changed
-- Level select screen with future levels: Coworker, Secretary, Inspection
-- Complete light Level 1: “First Day” (~3 minutes)
-- Physical-looking industrial control panel
-- Analog gauges, lamps, toggles, valve, alarm button, phone, “ХЗ” switch and DO NOT PRESS button
-- Guided gameplay tasks instead of only random joke cards
-- Systems react continuously to controls
-- Phone event and distractions groundwork
-- End-of-shift stats and grade
-- UA / EN
-- Versioned PWA cache
+- 2-minute Level 01 / 8 BIT scenario
+- 8/16/32/64 BIT difficulty concept shown in menu
+- Only 4 main interactions: toggle, knob, phone, absurd buttons
+- Longer comedy messages; no technical tutorial
+- On-screen control-room character (Vasya) with dialogue bubble
+- Character enters/leaves while gameplay continues
+- Level is deliberately hard to lose: this build tests fun and interaction, not system mastery
+- 16/32/64 BIT and later characters are intentionally locked

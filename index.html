@@ -1,115 +1,35 @@
-<!doctype html>
-<html lang="uk">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#15170f">
-<title>KEEP IT RUNNING</title>
-<link rel="manifest" href="manifest.webmanifest?v=006">
-<link rel="stylesheet" href="style.css?v=006">
-</head>
-<body>
+<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#11130e"><title>KEEP IT RUNNING</title><link rel="manifest" href="manifest.webmanifest?v=0061"><link rel="stylesheet" href="style.css?v=0061"></head><body>
 <div id="app">
 <section id="menu" class="screen active">
-  <div class="brand">
-    <small>R-01 PERSONNEL TERMINAL</small>
-    <h1>KEEP IT<br><em>RUNNING</em></h1>
-    <p id="tagline">Головне — не зробити гірше.</p>
-  </div>
-  <div class="level-list">
-    <button class="level unlocked" id="level1">
-      <span class="num">01</span><span><b id="l1name">ПЕРШИЙ ДЕНЬ</b><small id="l1sub">Навіть Вася колись починав.</small></span><i>▶</i>
-    </button>
-    <button class="level locked"><span class="num">02</span><span><b id="l2name">КОЛЕГА</b><small id="l2sub">Він тут уже двадцять років.</small></span><i>🔒</i></button>
-    <button class="level locked"><span class="num">03</span><span><b id="l3name">СЕКРЕТАРКА</b><small id="l3sub">«Ти каву будеш?»</small></span><i>🔒</i></button>
-    <button class="level locked"><span class="num">04</span><span><b id="l4name">ПЕРЕВІРКА</b><small id="l4sub">Роби вигляд, що все нормально.</small></span><i>🔒</i></button>
-  </div>
-  <div class="menu-bottom"><button id="lang">UA / EN</button><span>prototype v0.06</span></div>
+ <div class="logo"><small>R-01 // CONTROL ROOM</small><h1>KEEP IT<br><b>RUNNING</b></h1><p>Твоя задача проста: досидіти зміну.</p></div>
+ <div class="selector"><label>СКЛАДНІСТЬ</label><div class="bits"><button class="active">8 BIT<small>Має бути нормально.</small></button><button disabled>16 BIT<small>Уже цікавіше.</small></button><button disabled>32 BIT<small>Нащо ти це вибрав?</small></button><button disabled>64 BIT<small>Ну їбаш.</small></button></div></div>
+ <button id="start" class="start">LEVEL 01 // ПЕРША ЗМІНА <span>▶</span></button>
+ <div class="locked">LEVEL 02 // КОЛЕГА <span>🔒</span></div><div class="locked">LEVEL 03 // СЕКРЕТАРКА <span>🔒</span></div>
+ <footer><button id="lang">UA / EN</button><span>v0.061 // 8 BIT TEST</span></footer>
 </section>
 
 <section id="game" class="screen">
-  <header class="game-head">
-    <div><small id="shiftTitle">ЗМІНА 01 // ПЕРШИЙ ДЕНЬ</small><strong id="clock">03:00</strong></div>
-    <button id="pause">Ⅱ</button>
-  </header>
-
-  <div class="cabinet">
-    <div class="screws s1">+</div><div class="screws s2">+</div>
-    <div class="plate-title">БЛОК УПРАВЛІННЯ Р-01 <span>№ 0148</span></div>
-
-    <div class="gauges">
-      <div class="gauge-wrap"><div class="gauge" id="gTemp"><div class="ticks"></div><div class="needle"></div><div class="hub"></div><b>°C</b></div><label id="tempLabel">ТЕМПЕРАТУРА</label></div>
-      <div class="gauge-wrap"><div class="gauge" id="gPress"><div class="ticks"></div><div class="needle"></div><div class="hub"></div><b>ТИСК</b></div><label id="pressLabel">КОНТУР</label></div>
-    </div>
-
-    <div class="annunciator">
-      <button class="lamp green on" data-lamp="power"><i></i><span id="powerLamp">МЕРЕЖА</span></button>
-      <button class="lamp amber" data-lamp="pump"><i></i><span id="pumpLamp">НАСОС</span></button>
-      <button class="lamp red" data-lamp="alarm"><i></i><span id="alarmLamp">АВАРІЯ</span></button>
-      <button class="lamp white" data-lamp="unknown"><i></i><span>?</span></button>
-    </div>
-
-    <div class="controls">
-      <div class="control">
-        <label id="pumpText">НАСОС</label>
-        <button class="toggle" id="pump"><span></span></button>
-        <small id="pumpState">ВИМК</small>
-      </div>
-      <div class="control">
-        <label id="fanText">ВЕНТИЛЯТОР</label>
-        <button class="toggle" id="fan"><span></span></button>
-        <small id="fanState">ВИМК</small>
-      </div>
-      <div class="control valve-control">
-        <label id="valveText">КЛАПАН</label>
-        <button id="valve" class="valve"><i></i></button>
-        <small id="valveState">50%</small>
-      </div>
-      <div class="control">
-        <label id="alarmText">СИРЕНА</label>
-        <button id="silence" class="push">ТИХО!</button>
-        <small id="alarmState">ГОТОВА</small>
-      </div>
-    </div>
-
-    <div class="phone-area">
-      <button id="phone" class="phone">☎</button>
-      <div><b id="phoneTitle">ТЕЛЕФОН</b><small id="phoneState">мовчить</small></div>
-      <button id="hz" class="hz">ХЗ</button>
-    </div>
-
-    <div class="red-zone">
-      <small id="redCaption">НЕ НАТИСКАТИ БЕЗ ПОТРЕБИ</small>
-      <button id="red" class="big-red"></button>
-    </div>
-
-    <div class="tape">НЕ ЧІПАТИ! <span>Вася</span></div>
-  </div>
-
-  <div id="task" class="task hidden">
-    <small id="taskKind">ЩОСЬ НЕ ТАК</small>
-    <h2 id="taskTitle"></h2><p id="taskBody"></p>
-    <div id="taskHint"></div>
-  </div>
-  <div id="toast" class="toast"></div>
+ <header><span>LEVEL 01 // <b>8 BIT</b></span><strong id="clock">02:00</strong></header>
+ <div class="room">
+  <div class="wall-sign">БЛОК Р-01</div><div class="door"><span>ОПЕРАТОРСЬКА</span></div><div class="window"><i></i><i></i><i></i></div>
+  <div id="person" class="person hidden"><div class="head"><i></i></div><div class="body"><span></span></div><div class="arm"></div><div class="badge">ВАСЯ</div></div>
+  <div id="bubble" class="bubble hidden"><b id="speaker">ВАСЯ</b><p id="speech"></p></div>
+  <div class="desk"><div class="mug">☕</div><div class="papers"></div></div>
+ </div>
+ <div class="panel">
+   <div class="paneltitle">ПУЛЬТ УПРАВЛІННЯ // НЕ ЧІПАТИ БЕЗ ПОТРЕБИ</div>
+   <div class="lamps"><button id="green" class="lamp green on"><i></i><span>МЕРЕЖА</span></button><button id="yellow" class="lamp yellow"><i></i><span>ХЗ-1</span></button><button id="alarmLamp" class="lamp red"><i></i><span>АВАРІЯ</span></button></div>
+   <div class="things">
+    <div><label>ТУМБЛЕР №1</label><button id="toggle" class="toggle"><i></i></button><small id="toggleState">ВИМК</small></div>
+    <div><label>РЕГУЛЯТОР</label><button id="knob" class="knob"><i></i></button><small id="knobState">2</small></div>
+    <div><label>ТЕЛЕФОН</label><button id="phone" class="phone">☎</button><small id="phoneState">МОВЧИТЬ</small></div>
+   </div>
+   <div class="bottomrow"><button id="hz" class="hz">ХЗ</button><div class="warning"><small>НЕ НАТИСКАТИ</small><button id="red" class="redbutton"></button></div></div>
+   <div class="tape">Вася: «№1 не чіпати»</div>
+ </div>
+ <div id="story" class="story hidden"><small id="storyType">СИТУАЦІЯ</small><h2 id="storyTitle"></h2><p id="storyText"></p></div>
+ <div id="toast" class="toast"></div>
 </section>
 
-<section id="result" class="screen">
-  <div class="result-card">
-    <small>ЗМІНА 01 ЗАВЕРШЕНА</small>
-    <h2 id="resultTitle">ВИ ВИЖИЛИ</h2>
-    <p id="resultSub">Реактор теж.</p>
-    <div class="stats">
-      <div><span id="stMistakes">ПОРУШЕНЬ</span><b id="mistakes">0</b></div>
-      <div><span id="stRed">«НЕ НАТИСКАТИ»</span><b id="redCount">0</b></div>
-      <div><span id="stCalls">ДЗВІНКІВ ПРИЙНЯТО</span><b id="calls">0</b></div>
-    </div>
-    <div class="grade"><span id="gradeLabel">ОЦІНКА РОБОТИ</span><strong id="grade">ЗАДОВІЛЬНО</strong></div>
-    <button id="nextLevel">НАСТУПНА ЗМІНА 🔒</button>
-    <button id="again">ЩЕ РАЗ</button>
-    <button id="toMenu">МЕНЮ</button>
-  </div>
-</section>
-</div>
-<script src="game.js?v=006"></script>
-</body></html>
+<section id="result" class="screen"><div class="result"><small>КІНЕЦЬ ЗМІНИ // 8 BIT</small><h2>ВАС НЕ ЗВІЛЬНЕНО</h2><p>Поки що.</p><div class="report"><span>Натиснуто «НЕ НАТИСКАТИ» <b id="reds">0</b></span><span>Незрозумілих дій <b id="weird">0</b></span><span>Дзвінків пережито <b id="calls">0</b></span></div><blockquote id="finalQuote">«Для першого дня — нормально.»<br><b>— Вася</b></blockquote><button id="again">ЩЕ ОДНА ЗМІНА</button><button id="menuBtn">МЕНЮ</button></div></section>
+</div><script src="game.js?v=0061"></script></body></html>
