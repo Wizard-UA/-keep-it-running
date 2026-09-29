@@ -1,1 +1,28 @@
-<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#10120f"><link rel="manifest" href="manifest.webmanifest?v=004"><link rel="stylesheet" href="style.css?v=004"><title>KEEP IT RUNNING</title></head><body><main class="panel"><div class="topline"><div class="lang"><button id="lang-uk" class="langbtn">UA</button><button id="lang-en" class="langbtn">EN</button></div><span class="version">v0.04</span></div><header><div><small id="unitLabel"></small><h1>KEEP IT RUNNING</h1></div><div id="status" class="status ok"></div></header><section class="timer"><span id="survivalLabel"></span><strong id="timer">00:00.0</strong><span id="best"></span></section><section id="faultBox" class="faultbox hidden"></section><section id="alarms" class="alarms"></section><section class="meters" id="meters"></section><section class="controls"><button data-act="pump"><b></b><span></span></button><button data-act="generator"><b></b><span></span></button><button data-act="valve"><b></b><span></span></button><button data-act="vent"><b></b><span></span></button><button data-act="cool"><b></b><span></span></button><button data-act="scram" class="danger"><b>SCRAM</b><span></span></button></section><section class="log"><div id="logLabel"></div><p id="log"></p></section><button id="restart" class="restart hidden"></button><footer id="footer"></footer></main><script src="game.js?v=004"></script></body></html>
+<!doctype html>
+<html lang="uk"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#11130e"><title>KEEP IT RUNNING</title>
+<link rel="manifest" href="manifest.webmanifest?v=005"><link rel="stylesheet" href="style.css?v=005">
+</head><body>
+<main class="console">
+  <div class="top"><div><small>UNIT R-01 // SHIFT 3</small><h1>KEEP IT RUNNING</h1></div><div class="right"><button id="lang">UA</button><span>v0.05</span></div></div>
+  <section class="score"><div><small id="shiftLabel">ТИ ТУТ ВЖЕ</small><strong id="time">00:00</strong></div><div><small id="recordLabel">РЕКОРД</small><strong id="best">00:00</strong></div></section>
+  <section id="situation" class="situation">
+    <div class="lamp"></div><small id="situationLabel">СИТУАЦІЯ</small>
+    <h2 id="problem">...</h2><p id="detail"></p>
+  </section>
+  <section id="choices" class="choices"></section>
+  <section class="idiot-panel">
+    <button id="silence" class="metal">🔇 <b id="silenceText">ЗАТКНУТИ СИРЕНУ</b><span id="silenceSub">аварію не усуває</span></button>
+    <button id="mystery" class="metal">❓ <b id="mysteryText">РУБИЛЬНИК «ХЗ»</b><span id="mysterySub">ніхто не знає</span></button>
+    <button id="red" class="red">НЕ<br>НАТИСКАТИ</button>
+  </section>
+  <section class="gauges">
+    <div><span id="g1">ТЕМП.</span><meter id="temp" min="0" max="100" value="35"></meter></div>
+    <div><span id="g2">ТИСК</span><meter id="pressure" min="0" max="100" value="35"></meter></div>
+    <div><span id="g3">ПИЗДЕЦЬ</span><meter id="chaos" min="0" max="100" value="8"></meter></div>
+  </section>
+  <div id="toast" class="toast"></div>
+  <button id="restart" class="restart hidden">ЩЕ ОДНА ЗМІНА</button>
+  <footer>R-01 // ЯКЩО ПРАЦЮЄ — НЕ ЧІПАЙ // v0.05</footer>
+</main><script src="game.js?v=005"></script></body></html>
