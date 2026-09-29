@@ -1,15 +1,15 @@
-# KEEP IT RUNNING v0.05
+# KEEP IT RUNNING v0.06
 
-The stupid shift update.
+First vertical-slice build.
 
-A mobile browser game about being wildly underqualified for a control room.
-
-- absurd random situations
-- deliberately stupid choices with hidden system consequences
-- big red DO NOT PRESS button
-- mysterious “ХЗ” switch
-- alarm silencer that fixes absolutely nothing
-- TEMP / PRESSURE / ПИЗДЕЦЬ meters
+## What changed
+- Level select screen with future levels: Coworker, Secretary, Inspection
+- Complete light Level 1: “First Day” (~3 minutes)
+- Physical-looking industrial control panel
+- Analog gauges, lamps, toggles, valve, alarm button, phone, “ХЗ” switch and DO NOT PRESS button
+- Guided gameplay tasks instead of only random joke cards
+- Systems react continuously to controls
+- Phone event and distractions groundwork
+- End-of-shift stats and grade
 - UA / EN
-- local high score
-- iPhone-friendly PWA
+- Versioned PWA cache

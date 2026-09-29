@@ -1,49 +1,43 @@
-const $=s=>document.querySelector(s), clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-let lang=localStorage.kirLang||'uk', start, alive, temp,pressure,chaos, siren=true, best=+(localStorage.kirBest5||0), timer, current;
-const L={
-uk:{shift:'ТИ ТУТ ВЖЕ',record:'РЕКОРД',sit:'СИТУАЦІЯ',silence:'ЗАТКНУТИ СИРЕНУ',silenceSub:'аварію не усуває',mystery:'РУБИЛЬНИК «ХЗ»',mysterySub:'ніхто не знає',g:['ТЕМП.','ТИСК','ПИЗДЕЦЬ'],again:'ЩЕ ОДНА ЗМІНА',dead:'ЗМІНУ ЗАКІНЧЕНО',red:['Ти натиснув кнопку «НЕ НАТИСКАТИ». Логічно.','Десь дуже далеко щось велике клацнуло.','Начальник: «ХТО ЦЕ ЗРОБИВ?!»'],quiet:'Сирена замовкла. Проблема — ні.',hz:['Нічого не сталося. Підозріло.','Вимкнулось світло в туалеті.','Манометр тепер показує погоду.','Щось запрацювало. Не чіпай.']},
-en:{shift:'YOU HAVE BEEN HERE',record:'RECORD',sit:'SITUATION',silence:'SILENCE THE ALARM',silenceSub:'does not fix anything',mystery:'SWITCH “???”',mysterySub:'nobody knows',g:['TEMP','PRESSURE','OH SHIT'],again:'ANOTHER SHIFT',dead:'SHIFT OVER',red:['You pressed the DO NOT PRESS button. Naturally.','Something very large clicked far away.','Boss: “WHO DID THAT?!”'],quiet:'Alarm silenced. Problem remains.',hz:['Nothing happened. Suspicious.','The bathroom lights went out.','The pressure gauge now predicts weather.','Something started working. Do not touch it.']}
-};
-const S=[
-{uk:['ЩОСЬ ГУДЕ','Зліва. А може справа. Раніше так не гуділо.'],en:['SOMETHING IS HUMMING','Left side. Maybe right. It did not hum like this before.'],c:[
-['ВДАРИТИ ПО ПУЛЬТУ','HIT THE PANEL',-8,2,-2,'Перестало. Професіонал.','It stopped. Professional.'],
-['ПРИСЛУХАТИСЬ','LISTEN CLOSER',3,5,2,'Тепер ти точно знаєш: воно гуде.','Confirmed: it is definitely humming.'],
-['ЗРОБИТИ ВИГЛЯД, ЩО ТАК І БУЛО','PRETEND IT ALWAYS DID THAT',8,3,7,'Переконливо. Реактор не повірив.','Convincing. Reactor disagrees.']]},
-{uk:['ЗВІДТИ ЙДЕ ДИМ','Диму небагато. Поки що.'],en:['SMOKE IS COMING FROM THERE','Not much smoke. Yet.'],c:[
-['ПОДУТИ','BLOW ON IT',1,-3,1,'Дим образився, але лишився.','Smoke is offended but remains.'],
-['НАКРИТИ ГАНЧІРКОЮ','COVER IT WITH A RAG',10,1,8,'Тепер диму не видно. Проблему вирішено?','Smoke is invisible now. Fixed?'],
-['ВИМКНУТИ ОЦЕ','TURN THIS THING OFF',-9,-4,-5,'О. Допомогло. Що саме ти вимкнув — невідомо.','Oh. That helped. What you switched off is unknown.']]},
-{uk:['НАЧАЛЬНИК ДЗВОНИТЬ','Питає, чого температура росте.'],en:['THE BOSS IS CALLING','Asking why temperature is rising.'],c:[
-['ДАТЧИК ПИЗДИТЬ','THE SENSOR IS LYING',2,0,-4,'Начальник: «А. Ну добре.»','Boss: “Ah. Okay then.”'],
-['НЕ БРАТИ','IGNORE CALL',4,2,4,'Дзвонить ще раз. Наполегливий.','Calling again. Persistent.'],
-['СКАЗАТИ «ВСЕ ПІД КОНТРОЛЕМ»','SAY “UNDER CONTROL”',6,2,5,'Після цих слів завжди щось стається.','Those words always trigger something.']]},
-{uk:['ТИСК РОСТЕ','Манометр уже в червоному. Але червоний гарний.'],en:['PRESSURE IS RISING','Gauge is in the red. Red looks nice though.'],c:[
-['ПОСТУКАТИ ПО МАНОМЕТРУ','TAP THE GAUGE',0,-12,4,'Стрілка впала. Сам тиск — питання відкрите.','Needle dropped. Actual pressure is another matter.'],
-['ВІДКРИТИ ЯКИЙСЬ КЛАПАН','OPEN SOME VALVE',-2,-15,-5,'Пшшшш. Звучить переконливо.','Pssshhh. Sounds convincing.'],
-['ЗАТИСНУТИ ПАЛЬЦЕМ','HOLD IT WITH A FINGER',3,8,8,'Це був не той отвір.','Wrong hole.']]},
-{uk:['КУЛЕР НЕ СПРАВЛЯЄТЬСЯ','Температура повзе вгору. Інженерів немає.'],en:['COOLING IS NOT COPING','Temperature is climbing. No engineers around.'],c:[
-['ВІДКРИТИ ВІКНО','OPEN A WINDOW',-5,0,-2,'Стало прохолодніше тобі. Уже результат.','You feel cooler. That counts.'],
-['ДУТИ СИЛЬНІШЕ','BLOW HARDER',-2,0,1,'Технології майбутнього.','Future technology.'],
-['НАЛИТИ ВОДИ','POUR WATER ON IT',-14,7,9,'Температура впала. Електрика має питання.','Temperature dropped. Electricity has questions.']]},
-{uk:['ГОРИТЬ ЛАМПОЧКА','Червона. Підпис стерся у 1987-му.'],en:['A LIGHT IS ON','Red. Label wore off in 1987.'],c:[
-['НАТИСНУТИ НА ЛАМПОЧКУ','PRESS THE LIGHT',4,4,5,'Це лампочка. Не кнопка.','It is a light. Not a button.'],
-['ВИКРУТИТИ ЛАМПОЧКУ','REMOVE THE BULB',0,0,-6,'Тривоги більше нема. Технічно.','No warning light anymore. Technically.'],
-['ПОКЛИКАТИ КОЛЕГУ','CALL A COWORKER',-4,-4,-5,'Колега сказав: «ХЗ». Але стало легше.','Coworker said “dunno”. Somehow it helped.']]}
+const $=q=>document.querySelector(q), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+let lang=localStorage.kirLang||"uk", state={}, tick, eventTimer, phoneTimer, currentTask=null;
+const L={uk:{tag:"Головне — не зробити гірше.",shift:"ЗМІНА 01 // ПЕРШИЙ ДЕНЬ",temp:"ТЕМПЕРАТУРА",press:"КОНТУР",pump:"НАСОС",fan:"ВЕНТИЛЯТОР",valve:"КЛАПАН",alarm:"СИРЕНА",phone:"ТЕЛЕФОН",quiet:"мовчить",ring:"ДЗВОНИТЬ!",on:"УВІМК",off:"ВИМК",ready:"ГОТОВА",muted:"ЗАТКНУТА",task:"ЩОСЬ НЕ ТАК",hint:"Підказка",survive:"ВИ ВИЖИЛИ",surviveSub:"Реактор теж. Дивовижно.",fail:"НУ МАЙЖЕ",failSub:"Комісія просить більше не приходити.",grade:["ГЕНІЙ","ЗАДОВІЛЬНО","ПІДОЗРІЛО","ЯК ТИ СЮДИ ПОТРАПИВ?"],toasts:["Ти натиснув «ХЗ». Сміливо.","Десь згасло світло. Не тут.","Нічого. Це лякає найбільше."],red:["Кнопка була підписана.","Десь дуже далеко щось клацнуло.","Ти ж бачив напис, так?"],call:["Начальник: «Ну як там?» — Ти: «Нормально».","Вася: «Не чіпай червону». Дуже вчасно.","Диспетчер питає показники. Ти сказав: «зелені»."]},
+en:{tag:"Main objective: don't make it worse.",shift:"SHIFT 01 // FIRST DAY",temp:"TEMPERATURE",press:"LOOP",pump:"PUMP",fan:"FAN",valve:"VALVE",alarm:"ALARM",phone:"PHONE",quiet:"silent",ring:"RINGING!",on:"ON",off:"OFF",ready:"ARMED",muted:"MUTED",task:"SOMETHING IS WRONG",hint:"Hint",survive:"YOU SURVIVED",surviveSub:"So did the reactor. Amazing.",fail:"ALMOST",failSub:"Management asks you not to return.",grade:["GENIUS","ACCEPTABLE","SUSPICIOUS","HOW DID YOU GET THIS JOB?"],toasts:["You pulled the ??? switch. Bold.","Some lights went out. Not here.","Nothing happened. That's worse."],red:["The button had a label.","Something huge clicked far away.","You did see the warning, right?"],call:["Boss: “How's it going?” — “Fine.”","Vasya: “Don't touch the red one.” Great timing.","Dispatcher asks for readings. You said: “green.”"]}};
+const tasks=[
+ {id:"hot",at:20,uk:["ЩОСЬ ГАРЯЧЕ","Температура повзе вгору.","Спробуй увімкнути щось, що ганяє повітря."],en:["SOMETHING IS HOT","Temperature is creeping up.","Try switching on something that moves air."],solve:()=>state.fan},
+ {id:"pump",at:52,uk:["НАСОС МОВЧИТЬ","Лампочка насоса теж. Підозріло.","Тумблер насоса виглядає достатньо офіційно."],en:["THE PUMP IS SILENT","Its lamp is too. Suspicious.","The pump toggle looks official enough."],solve:()=>state.pump},
+ {id:"pressure",at:86,uk:["МАНОМЕТР ЛІЗЕ ВГОРУ","Стрілка явно кудись поспішає.","Може, клапан не повинен стояти посередині?"],en:["PRESSURE IS CLIMBING","The needle is clearly in a hurry.","Maybe the valve shouldn't sit halfway?"],solve:()=>state.valve>=75},
+ {id:"phone",at:120,uk:["ХТОСЬ ДЗВОНИТЬ","Телефон не перестане сам.","Можна навіть підняти слухавку."],en:["SOMEONE IS CALLING","The phone won't stop itself.","You could actually answer it."],solve:()=>state.calls>0},
+ {id:"combo",at:150,uk:["О, ТЕПЕР ГУДЕ","І температура знову росте.","Насос + вентилятор. Високі технології."],en:["NOW IT'S HUMMING","And temperature is rising again.","Pump + fan. Advanced technology."],solve:()=>state.pump&&state.fan}
 ];
-function tr(a){return a[lang==='uk'?0:1]}
-function fmt(s){s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-function buzz(p){navigator.vibrate?.(p)}
-function tone(f=300,d=.07){try{let A=window._a||(window._a=new (AudioContext||webkitAudioContext)()),o=A.createOscillator(),g=A.createGain();o.frequency.value=f;g.gain.value=.035;o.connect(g);g.connect(A.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,A.currentTime+d);o.stop(A.currentTime+d)}catch{}}
-function toast(x){$('#toast').textContent=x;$('#toast').classList.add('show');setTimeout(()=>$('#toast').classList.remove('show'),1500)}
-function next(){current=S[Math.floor(Math.random()*S.length)];$('#problem').textContent=tr(current[lang]);$('#detail').textContent=current[lang][1];$('#choices').innerHTML='';current.c.forEach((c,i)=>{let b=document.createElement('button');b.innerHTML=`<b>${c[lang==='uk'?0:1]}</b>`;b.onclick=()=>choose(c);$('#choices').appendChild(b)})}
-function choose(c){if(!alive)return;temp+=c[2]+Math.random()*5;pressure+=c[3]+Math.random()*4;chaos+=c[4]+Math.random()*4;toast(c[lang==='uk'?5:6]);tone(260+Math.random()*300);buzz(25);render();if(alive)setTimeout(next,650)}
-function render(){temp=clamp(temp,0,110);pressure=clamp(pressure,0,110);chaos=clamp(chaos,0,110);$('#temp').value=temp;$('#pressure').value=pressure;$('#chaos').value=chaos;document.body.classList.toggle('bad',Math.max(temp,pressure,chaos)>75);if(Math.max(temp,pressure,chaos)>=100)die()}
-function die(){if(!alive)return;alive=false;clearInterval(timer);let t=(Date.now()-start)/1000;if(t>best){best=t;localStorage.kirBest5=best}$('#problem').textContent=L[lang].dead;$('#detail').textContent=lang==='uk'?'Офіційна причина: «людський фактор». Несподівано.':'Official cause: “human factor”. Shocking.';$('#choices').innerHTML='';$('#restart').classList.remove('hidden');buzz([150,80,150,80,400]);tone(120,.5)}
-function reset(){alive=true;temp=30;pressure=34;chaos=6;siren=true;start=Date.now();$('#restart').classList.add('hidden');next();render();clearInterval(timer);timer=setInterval(()=>{$('#time').textContent=fmt((Date.now()-start)/1000);$('#best').textContent=fmt(best);temp+=.35;pressure+=.22;chaos+=.18;render()},1000)}
-function labels(){let l=L[lang];$('#shiftLabel').textContent=l.shift;$('#recordLabel').textContent=l.record;$('#situationLabel').textContent=l.sit;$('#silenceText').textContent=l.silence;$('#silenceSub').textContent=l.silenceSub;$('#mysteryText').textContent=l.mystery;$('#mysterySub').textContent=l.mysterySub;$('#g1').textContent=l.g[0];$('#g2').textContent=l.g[1];$('#g3').textContent=l.g[2];$('#restart').textContent=l.again;$('#lang').textContent=lang==='uk'?'UA':'EN'}
-$('#lang').onclick=()=>{lang=lang==='uk'?'en':'uk';localStorage.kirLang=lang;labels();next()};
-$('#silence').onclick=()=>{siren=!siren;toast(L[lang].quiet);chaos+=2;tone(180,.04);render()};
-$('#mystery').onclick=()=>{let a=L[lang].hz;toast(a[Math.floor(Math.random()*a.length)]);temp+=Math.random()*16-8;pressure+=Math.random()*16-8;chaos+=Math.random()*14-4;tone(190,.12);render()};
-$('#red').onclick=()=>{let a=L[lang].red;toast(a[Math.floor(Math.random()*a.length)]);chaos+=18;temp+=8;pressure+=7;buzz([80,40,80]);tone(90,.25);render()};
-$('#restart').onclick=reset;labels();reset();
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=005').then(r=>r.update()).catch(()=>{});
+function tr(x){return x[lang]}
+function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));$(id).classList.add("active")}
+function tone(f=350,d=.06){try{let A=window._a||(window._a=new (AudioContext||webkitAudioContext)()),o=A.createOscillator(),g=A.createGain();o.frequency.value=f;g.gain.value=.025;o.connect(g);g.connect(A.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,A.currentTime+d);o.stop(A.currentTime+d)}catch{}}
+function buzz(p=[25]){navigator.vibrate?.(p)}
+function toast(t){$("#toast").textContent=t;$("#toast").classList.add("show");setTimeout(()=>$("#toast").classList.remove("show"),1500)}
+function setNeedle(id,v){$(id+" .needle").style.transform=`rotate(${-125+clamp(v,0,100)*2.5}deg)`}
+function labels(){let l=L[lang];$("#tagline").textContent=l.tag;$("#shiftTitle").textContent=l.shift;$("#tempLabel").textContent=l.temp;$("#pressLabel").textContent=l.press;$("#pumpText").textContent=l.pump;$("#fanText").textContent=l.fan;$("#valveText").textContent=l.valve;$("#alarmText").textContent=l.alarm;$("#phoneTitle").textContent=l.phone;$("#l1name").textContent=lang==="uk"?"ПЕРШИЙ ДЕНЬ":"FIRST DAY";$("#l1sub").textContent=lang==="uk"?"Навіть Вася колись починав.":"Even Vasya had a first day.";$("#l2name").textContent=lang==="uk"?"КОЛЕГА":"COWORKER";$("#l2sub").textContent=lang==="uk"?"Він тут уже двадцять років.":"He's been here twenty years.";$("#l3name").textContent=lang==="uk"?"СЕКРЕТАРКА":"SECRETARY";$("#l3sub").textContent=lang==="uk"?"«Ти каву будеш?»":"“Want coffee?”";$("#l4name").textContent=lang==="uk"?"ПЕРЕВІРКА":"INSPECTION";$("#l4sub").textContent=lang==="uk"?"Роби вигляд, що все нормально.":"Pretend everything is fine.";render()}
+function render(){if(!state.started)return;let l=L[lang];$("#pump").classList.toggle("on",state.pump);$("#fan").classList.toggle("on",state.fan);$("#pumpState").textContent=state.pump?l.on:l.off;$("#fanState").textContent=state.fan?l.on:l.off;$("#valveState").textContent=state.valve+"%";$("#valve").style.transform=`rotate(${(state.valve-50)*2.2}deg)`;$("#alarmState").textContent=state.silenced?l.muted:l.ready;$("#phoneState").textContent=state.phone?l.ring:l.quiet;$("#phone").classList.toggle("ring",state.phone);$('[data-lamp="pump"]').classList.toggle("on",state.pump);$('[data-lamp="alarm"]').classList.toggle("on",state.danger&&!state.silenced);$('[data-lamp="unknown"]').classList.toggle("on",Math.random()<.04);setNeedle("#gTemp",state.temp);setNeedle("#gPress",state.pressure);document.body.classList.toggle("danger",state.danger)}
+function startGame(){clearInterval(tick);clearInterval(eventTimer);state={started:true,start:Date.now(),duration:180,temp:34,pressure:38,pump:false,fan:false,valve:50,silenced:false,phone:false,calls:0,mistakes:0,reds:0,done:new Set(),alive:true};currentTask=null;show("#game");render();tick=setInterval(step,500);setTimeout(()=>toast(lang==="uk"?"Три хвилини. Не зламай.":"Three minutes. Don't break it."),700)}
+function step(){if(!state.alive)return;let elapsed=(Date.now()-state.start)/1000,left=Math.max(0,state.duration-elapsed);$("#clock").textContent=`${String(Math.floor(left/60)).padStart(2,"0")}:${String(Math.floor(left%60)).padStart(2,"0")}`;
+state.temp += (.32-(state.fan?.28:0)-(state.pump?.18:0))*.5;
+state.pressure += (.13-(state.valve>=75?.16:0)+(state.valve<=25?.16:0))*.5;
+for(const t of tasks){if(elapsed>=t.at&&!state.done.has(t.id)&&(!currentTask||currentTask.id!==t.id)){currentTask=t;showTask(t);break}}
+if(currentTask&&currentTask.solve()){state.done.add(currentTask.id);toast(lang==="uk"?"О. Допомогло. Не звикай.":"Oh. It worked. Don't get used to it.");$("#task").classList.add("hidden");currentTask=null;state.temp=Math.max(25,state.temp-7);state.pressure=Math.max(25,state.pressure-5);tone(520)}
+if(elapsed>112&&!state.phone&&state.calls===0)ringPhone();
+state.danger=state.temp>72||state.pressure>78;
+if(state.temp>=100||state.pressure>=100){state.alive=false;finish(false)}
+if(left<=0)finish(true);render()}
+function showTask(t){$("#task").classList.remove("hidden");$("#taskKind").textContent=L[lang].task;$("#taskTitle").textContent=t[lang][0];$("#taskBody").textContent=t[lang][1];$("#taskHint").textContent=L[lang].hint+": "+t[lang][2];tone(700,.12);buzz([70,50,70])}
+function ringPhone(){state.phone=true;tone(800,.12);setTimeout(()=>state.phone&&tone(800,.12),500)}
+function finish(win){if(!state.alive&&win)return;state.alive=false;clearInterval(tick);show("#result");let l=L[lang];$("#resultTitle").textContent=win?l.survive:l.fail;$("#resultSub").textContent=win?l.surviveSub:l.failSub;$("#mistakes").textContent=state.mistakes;$("#redCount").textContent=state.reds;$("#calls").textContent=state.calls;let bad=state.mistakes+state.reds*2;$("#grade").textContent=l.grade[bad<=1?0:bad<=4?1:bad<=8?2:3];buzz(win?[50,50,100]:[200,80,300])}
+$("#pump").onclick=()=>{state.pump=!state.pump;tone();render()};
+$("#fan").onclick=()=>{state.fan=!state.fan;tone();render()};
+$("#valve").onclick=()=>{state.valve=state.valve>=75?25:state.valve+25;tone(280);render()};
+$("#silence").onclick=()=>{state.silenced=!state.silenced;toast(lang==="uk"?"Сирена замовкла. Аварія — ні.":"Alarm silenced. Emergency remains.");state.mistakes++;render()};
+$("#phone").onclick=()=>{if(state.phone){state.phone=false;state.calls++;toast(L[lang].call[Math.floor(Math.random()*L[lang].call.length)]);tone(420);render()}else toast(lang==="uk"?"Ти подзвонив сам собі. Зайнято.":"You called yourself. Busy.")};
+$("#hz").onclick=()=>{state.mistakes++;state.temp+=Math.random()*12-4;state.pressure+=Math.random()*12-4;toast(L[lang].toasts[Math.floor(Math.random()*3)]);tone(170,.12);render()};
+$("#red").onclick=()=>{state.reds++;state.mistakes++;state.temp+=9;state.pressure+=7;toast(L[lang].red[Math.floor(Math.random()*3)]);tone(90,.25);buzz([80,40,100]);render()};
+$("#level1").onclick=startGame;$("#again").onclick=startGame;$("#toMenu").onclick=()=>show("#menu");$("#nextLevel").onclick=()=>toast(lang==="uk"?"Рівень 02 буде наступним 😈":"Level 02 is next 😈");$("#pause").onclick=()=>{toast(lang==="uk"?"Перерва? На реакторі? 😂":"A break? At a reactor? 😂")};
+$("#lang").onclick=()=>{lang=lang==="uk"?"en":"uk";localStorage.kirLang=lang;labels()};
+labels();show("#menu");
+if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js?v=006").then(r=>r.update()).catch(()=>{});
